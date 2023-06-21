@@ -16,10 +16,7 @@ export class Board {
     this.mode = mode;
   }
 
-  handleOutsideClick(event) {
-    if (event.target.closest('table.sudoku')) {
-      return;
-    }
+  deselectCell() {
     if (this.selectedCell) {
       document.removeEventListener('keydown', this.selectedCell.handleKeyPress);
       const oldSelectedCellElement = document.getElementById(`cell-${this.selectedCell.i}-${this.selectedCell.j}`);
@@ -28,50 +25,69 @@ export class Board {
     }
   }
 
-  handleClick(i, j) {
-    if (this.selectedCell) {
-      document.removeEventListener('keydown', this.selectedCell.handleKeyPress);
-      const oldSelectedCellElement = document.getElementById(`cell-${this.selectedCell.i}-${this.selectedCell.j}`);
-      oldSelectedCellElement.className = "";
-    }
-  
+  selectCell(i, j) {
     this.selectedCell = { i, j, handleKeyPress: this.handleKeyPress.bind(this) };
     const newSelectedCellElement = document.getElementById(`cell-${i}-${j}`);
     newSelectedCellElement.className = window.board.cellModeSelector.mode == "Value" ? "selected-value" : "selected-annotations";
     document.addEventListener('keydown', this.selectedCell.handleKeyPress);
-  }  
+  }
+
+  handleOutsideClick(event) {
+    if (event.target.closest('table.sudoku')) {
+      return;
+    }
+    this.deselectCell();
+  }
+
+  handleClick(i, j) {
+    this.deselectCell();
+    this.selectCell(i, j);
+  }
 
   handleKeyPress(event) {
     const number = parseInt(event.key);
+    
+    if (isNaN(number) || number < 1 || number > 9) {
+      return;
+    }
+
     const { i, j } = this.selectedCell;
-    if (!isNaN(number) && number >= 1 && number <= 9) {
-      if (this.mode === 'Value') {
+
+    switch (this.mode) {
+      case 'Value':
         this.boardData[i][j].setValue(number);
-      } else if (this.mode === 'Annotations') {
+        break;
+      case 'Annotations':
         this.boardData[i][j].toggleAnnotation(number);
-      }
-      document.body.innerHTML = this.render();
+        break;
+      default:
+        break;
     }
+
+    document.body.innerHTML = this.render();
   }
-  
+
+  renderRow(i) {
+    const rowHtml = this.boardData[i].map((_, j) => this.renderCell(i, j)).join('');
+    return `<tr>${rowHtml}</tr>`;
+  }
+
+
+  renderCell(i, j) {
+    const cell = this.boardData[i][j];
+    const isSelected = this.selectedCell && this.selectedCell.i === i && this.selectedCell.j === j;
+    const selectedClass = isSelected ? (this.mode === 'Value' ? 'selected-value' : 'selected-annotations') : '';
+    const backgroundColorClass = (cell instanceof Cell) ? selectedClass : '';
+    return `<td id="cell-${i}-${j}" onclick="window.board.handleClick(${i}, ${j})" class="${backgroundColorClass}">${cell.render()}</td>`;
+  }
+
   render() {
-    let html = `<div class="sudoku-container">
-                    <table class="sudoku">`;
-    for (let i = 0; i < 9; i++) {
-      html += `<tr>`;
-      for (let j = 0; j < 9; j++) {
-        const cell = this.boardData[i][j];
-        const isSelected = this.selectedCell && this.selectedCell.i === i && this.selectedCell.j === j;
-        const selectedClass = isSelected ? (this.mode === 'Value' ? 'selected-value' : 'selected-annotations') : '';
-        const backgroundColorClass = (cell instanceof Cell) ? selectedClass : '';
-        html += `<td id="cell-${i}-${j}" onclick="window.board.handleClick(${i}, ${j})" class="${backgroundColorClass}">${cell.render()}</td>`;
-      }
-      html += `</tr>`;
-    }
-    html += `</table>`;
-    html += this.cellModeSelector.render();
-    html += `</div>`;
-    return html;
+    const tableHtml = this.boardData.map((_, i) => this.renderRow(i)).join('');
+    return `
+    <div class="sudoku-container">
+      <table class="sudoku">${tableHtml}</table>
+      ${this.cellModeSelector.render()}
+    </div>`;
   }
 
   toggleMode(checkbox) {
