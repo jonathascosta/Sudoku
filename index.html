@@ -28,11 +28,9 @@
         document.body.innerHTML = board.render();
 
         let cell = board.boardData[0][1];
-        cell.showAnnotation(9);
-        cell.showAnnotation(8);
-        cell.showAnnotation(4);
-        cell.showAnnotation(2);
-        cell.showAnnotation(3);
+        cell.toggleAnnotation(9);
+        cell.toggleAnnotation(8);
+        cell.toggleAnnotation(4);
         document.body.innerHTML = board.render();
     </script>
 </body>
