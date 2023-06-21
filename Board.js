@@ -7,9 +7,7 @@ export class Board {
     this.selectedCell = null;
     window.addEventListener('click', this.handleOutsideClick.bind(this));
     this.boardData = boardData.map((row, i) =>
-      row.map((cellData, j) =>
-        Array.isArray(cellData) ? new AnnotationsCell(cellData, () => this.handleClick(i, j)) : new ValueCell(cellData, () => this.handleClick(i, j))
-      )
+      row.map((cellData, j) => new Cell(cellData, [], () => this.handleClick(i, j)))
     );
     this.mode = 'Value';
   }
@@ -36,12 +34,12 @@ export class Board {
       const oldSelectedCellElement = document.getElementById(`cell-${this.selectedCell.i}-${this.selectedCell.j}`);
       oldSelectedCellElement.className = "";
     }
-
+  
     this.selectedCell = { i, j, handleKeyPress: this.handleKeyPress.bind(this) };
     const newSelectedCellElement = document.getElementById(`cell-${i}-${j}`);
     newSelectedCellElement.className = window.board.cellModeSelector.mode == "Value" ? "selected-value" : "selected-annotations";
     document.addEventListener('keydown', this.selectedCell.handleKeyPress);
-  }
+  }  
 
   handleKeyPress(event) {
     const number = parseInt(event.key);
@@ -65,7 +63,7 @@ export class Board {
         const cell = this.boardData[i][j];
         const isSelected = this.selectedCell && this.selectedCell.i === i && this.selectedCell.j === j;
         const selectedClass = isSelected ? (this.mode === 'Value' ? 'selected-value' : 'selected-annotations') : '';
-        const backgroundColorClass = cell instanceof AnnotationsCell || cell instanceof ValueCell ? selectedClass : '';
+        const backgroundColorClass = (cell instanceof Cell) ? selectedClass : '';
         html += `<td id="cell-${i}-${j}" onclick="window.board.handleClick(${i}, ${j})" class="${backgroundColorClass}">${cell.render()}</td>`;
       }
       html += `</tr>`;
