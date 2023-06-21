@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+    <link href="./main.css" rel="stylesheet" />
+</head>
+
+<body>
+    <script type="module">
+        import { Board } from './Board.js';
+
+        let initialBoard = [
+            [5, [], [], 1, [], [], [], [], 4],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []],
+            [[], [], [], [], [], [], [], [], []]
+        ];
+
+        let board = new Board(initialBoard);
+        window.board = board;
+        document.body.innerHTML = board.render();
+
+        let cell = board.boardData[0][1];
+        cell.showAnnotation(9);
+        cell.showAnnotation(8);
+        cell.showAnnotation(4);
+        cell.showAnnotation(2);
+        cell.showAnnotation(3);
+        document.body.innerHTML = board.render();
+    </script>
+</body>
+
+</html>
