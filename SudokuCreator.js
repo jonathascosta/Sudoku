@@ -1,4 +1,4 @@
-class Cell {
+export class Cell {
     constructor(board, line, column, value) {
         this.Board = board;
         this.Line = line;
@@ -19,7 +19,7 @@ class Cell {
     }
 }
 
-class Board {
+export class Board {
     constructor() {
         this.Cells = null;
     }
@@ -245,7 +245,7 @@ export class BoardBuilder {
     }
 }
 
-class Solver {
+export class Solver {
     Solve(board, row = 0, column = 0) {
         let solutionsCount = 0;
 
@@ -279,5 +279,25 @@ class Solver {
         }
 
         return solutionsCount === 1;
+    }
+
+    getSolutionValue(board, row, column) {
+        if (!board || !board.Cells) {
+            throw "Invalid board";
+        }
+
+        if (!board.Cells[row][column].IsEmpty()) {
+            return board.Cells[row][column].Value;
+        }
+
+        for (let i = 1; i <= 9; i++) {
+            board.Cells[row][column].Value = i;
+            if (this.Solve(board, 0, 0)) {
+                return i;
+            }
+            board.Cells[row][column].SetEmpty();
+        }
+
+        return null;
     }
 }

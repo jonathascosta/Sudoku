@@ -47,6 +47,7 @@
 
             let board = new Board(initialBoard);
             window.board = board;
+            window.puzzle = sudokuPuzzle;
             document.body.innerHTML = board.render();
 
             loader.stop();

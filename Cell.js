@@ -6,7 +6,7 @@ export class Cell {
     this.onClick = onClick;
   }
 
-  setValue(value, saveToHistory = true) {
+  setValue(value) {
     if (typeof value === 'number') {
       this.value = value;
       this.type = 'Value';

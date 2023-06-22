@@ -1,5 +1,6 @@
 import { CellModeSelector } from './CellModeSelector.js';
 import { Cell } from './Cell.js';
+import { Solver, Cell as PuzzleCell, Board as PuzzleBoard } from './SudokuCreator.js';
 
 export class Board {
   constructor(boardData = []) {
@@ -145,6 +146,29 @@ export class Board {
     return `<tr>${rowHtml}</tr>`;
   }
 
+  hintSelected() {
+    if (this.selectedCell) {
+      const cell = this.boardData[this.selectedCell.i][this.selectedCell.j];
+      if (cell.value == null) {
+        let solver = new Solver();
+  
+        // Convert board to the format expected by the solver.
+        let board = new PuzzleBoard();
+        board.Cells = this.boardData.map((row, i) =>
+          row.map((c, j) => new PuzzleCell(board, i, j, !(c.value) ? 0 : c.value))
+        );
+  
+        // Get the solved value for the selected cell.
+        const solvedValue = solver.getSolutionValue(board, this.selectedCell.i, this.selectedCell.j);
+        if (solvedValue !== null) {
+          // Set the value of the selected cell to the solved value.
+          this.boardData[this.selectedCell.i][this.selectedCell.j].setValue(solvedValue);
+          document.body.innerHTML = this.render();
+        }
+      }
+    }
+  }
+  
   eraseSelected() {
     if (this.selectedCell) {
       this.boardData[this.selectedCell.i][this.selectedCell.j].value = null;
@@ -171,6 +195,7 @@ export class Board {
       <div>
         <button id="undo-button" onclick="window.board.undo()">Undo</button>
         <button id="erase-button" onclick="window.board.eraseSelected()">Erase</button>
+        <button id="hint-button" onclick="window.board.hintSelected()">Hint</button>
       </div>
     </div>`;
   }
