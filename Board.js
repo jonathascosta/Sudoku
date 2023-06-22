@@ -51,6 +51,18 @@ export class Board {
     }
   }
 
+  removeAnnotations(number, i, j) {
+    for (let k = 0; k < 9; k++) {
+      this.boardData[i][k].removeAnnotation(number);
+      this.boardData[k][j].removeAnnotation(number);
+    }
+
+    const squareCoordinates = this.getSquareCoordinates(i, j);
+    for (let { i: squareI, j: squareJ } of squareCoordinates) {
+      this.boardData[squareI][squareJ].removeAnnotation(number);
+    }
+  }
+
   selectCell(i, j) {
     this.selectedCell = { i, j, handleKeyPress: this.handleKeyPress.bind(this) };
     const newSelectedCellElement = document.getElementById(`cell-${i}-${j}`);
@@ -104,6 +116,7 @@ export class Board {
     switch (this.mode) {
       case 'Value':
         this.boardData[i][j].setValue(number);
+        this.removeAnnotations(number, i, j);
         break;
       case 'Annotations':
         this.boardData[i][j].toggleAnnotation(number);
@@ -132,6 +145,14 @@ export class Board {
     return `<tr>${rowHtml}</tr>`;
   }
 
+  eraseSelected() {
+    if (this.selectedCell) {
+      this.boardData[this.selectedCell.i][this.selectedCell.j].value = null;
+      this.boardData[this.selectedCell.i][this.selectedCell.j].annotations = [];
+      this.boardData[this.selectedCell.i][this.selectedCell.j].type = "Annotations";
+      document.body.innerHTML = this.render();
+    }
+  }
 
   renderCell(i, j) {
     const cell = this.boardData[i][j];
@@ -147,7 +168,10 @@ export class Board {
     <div class="sudoku-container">
       <table class="sudoku">${tableHtml}</table>
       ${this.cellModeSelector.render()}
-      <button id="undo-button" onclick="window.board.undo()">Undo</button>
+      <div>
+        <button id="undo-button" onclick="window.board.undo()">Undo</button>
+        <button id="erase-button" onclick="window.board.eraseSelected()">Erase</button>
+      </div>
     </div>`;
   }
 

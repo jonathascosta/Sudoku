@@ -91,9 +91,11 @@ table.annotations>tbody>tr>td {
     color: white;
 }
 
-#undo-button {
+button {
     font-size: 1.5em;
     padding: 8px 24px;
+    width: 110px;
+    height: 110px;
 }
 
 .highlighted {
