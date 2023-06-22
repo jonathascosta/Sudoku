@@ -53,13 +53,10 @@ export class Loader {
     }
 
     updatePhrase() {
-        this.textElement.innerText = this.phrases[this.currentPhraseIndex];
-        this.currentPhraseIndex++;
-        if (this.currentPhraseIndex >= this.phrases.length) {
-            this.currentPhraseIndex = 0;
-        }
+        const randomIndex = Math.floor(Math.random() * this.phrases.length);
+        this.textElement.innerText = this.phrases[randomIndex];
     }
-
+    
     stop() {
         clearInterval(this.loadingInterval);
         this.element.style.opacity = '0';

@@ -9,6 +9,7 @@ export class Board {
     this.boardData = boardData.map((row, i) =>
       row.map((cellData, j) => new Cell(cellData, [], () => this.handleClick(i, j)))
     );
+    this.history = [];
     this.mode = 'Value';
   }
 
@@ -46,12 +47,23 @@ export class Board {
 
   handleKeyPress(event) {
     const number = parseInt(event.key);
-    
     if (isNaN(number) || number < 1 || number > 9) {
       return;
     }
 
     const { i, j } = this.selectedCell;
+    const action = {
+      i: this.selectedCell.i,
+      j: this.selectedCell.j,
+      state: {
+        value: this.boardData[i][j].value,
+        annotations: [...this.boardData[i][j].annotations],
+        type: this.boardData[i][j].type
+      },
+      type: this.mode,
+      number: number
+    };
+    this.history.push(action);
 
     switch (this.mode) {
       case 'Value':
@@ -62,6 +74,18 @@ export class Board {
         break;
       default:
         break;
+    }
+
+    document.body.innerHTML = this.render();
+  }
+
+  undo() {
+    const lastAction = this.history.pop();
+    if (lastAction) {
+      const cell = this.boardData[lastAction.i][lastAction.j];
+      cell.value = lastAction.state.value;
+      cell.annotations = lastAction.state.annotations;
+      cell.type = lastAction.state.type;
     }
 
     document.body.innerHTML = this.render();
