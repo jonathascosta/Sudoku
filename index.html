@@ -3,41 +3,57 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>title</title>
+    <title>Sudoku</title>
     <link href="./main.css" rel="stylesheet" />
 </head>
 
 <body>
+    <div id="loader">
+        <div id="loading-text">Loading...</div>
+    </div>
+
     <script type="module">
         import { Board } from './Board.js';
+        import { Loader } from './Loader.js';
         import { BoardBuilder } from './SudokuCreator.js';
 
-        var builder = new BoardBuilder();
-        var sudokuPuzzle = builder.Build();
+        const loader = new Loader('loader', 3000);
+        loader.start();
 
-        let initialBoard = [
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []],
-            [[], [], [], [], [], [], [], [], []]
-        ];
+        const worker = new Worker('./sudoku-worker.js', { type: 'module' });
 
-        for (let i = 0; i < 9; i++) {
-            for (let j = 0; j < 9; j++) {
-                if (!sudokuPuzzle.Cells[i][j].IsEmpty()) {
-                    initialBoard[i][j] = sudokuPuzzle.Cells[i][j].Value;
+        worker.onmessage = function (event) {
+            let sudokuPuzzle = event.data;
+
+            let initialBoard = [
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []],
+                [[], [], [], [], [], [], [], [], []]
+            ];
+
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    if (sudokuPuzzle.Cells[i][j].Value !== 0) {
+                        initialBoard[i][j] = sudokuPuzzle.Cells[i][j].Value;
+                    }
                 }
             }
-        }
 
-        let board = new Board(initialBoard);
-        window.board = board;
-        document.body.innerHTML = board.render();
+            let board = new Board(initialBoard);
+            window.board = board;
+            document.body.innerHTML = board.render();
+
+            loader.stop();
+        };
+
+        worker.postMessage('start');
+
     </script>
 </body>
 
