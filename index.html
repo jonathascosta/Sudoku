@@ -10,9 +10,13 @@
 <body>
     <script type="module">
         import { Board } from './Board.js';
+        import { BoardBuilder } from './SudokuCreator.js';
+
+        var builder = new BoardBuilder();
+        var sudokuPuzzle = builder.Build();
 
         let initialBoard = [
-            [5, [], [], 1, [], [], [], [], 4],
+            [[], [], [], [], [], [], [], [], []],
             [[], [], [], [], [], [], [], [], []],
             [[], [], [], [], [], [], [], [], []],
             [[], [], [], [], [], [], [], [], []],
@@ -23,14 +27,16 @@
             [[], [], [], [], [], [], [], [], []]
         ];
 
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                if (!sudokuPuzzle.Cells[i][j].IsEmpty()) {
+                    initialBoard[i][j] = sudokuPuzzle.Cells[i][j].Value;
+                }
+            }
+        }
+
         let board = new Board(initialBoard);
         window.board = board;
-        document.body.innerHTML = board.render();
-
-        let cell = board.boardData[0][1];
-        cell.toggleAnnotation(9);
-        cell.toggleAnnotation(8);
-        cell.toggleAnnotation(4);
         document.body.innerHTML = board.render();
     </script>
 </body>
