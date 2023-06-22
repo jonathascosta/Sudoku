@@ -17,11 +17,36 @@ export class Board {
     this.mode = mode;
   }
 
+  getSquareCoordinates(i, j) {
+    const startRow = Math.floor(i / 3) * 3;
+    const startCol = Math.floor(j / 3) * 3;
+
+    let coordinates = [];
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        coordinates.push({ i: startRow + row, j: startCol + col });
+      }
+    }
+    return coordinates;
+  }
+
   deselectCell() {
     if (this.selectedCell) {
       document.removeEventListener('keydown', this.selectedCell.handleKeyPress);
       const oldSelectedCellElement = document.getElementById(`cell-${this.selectedCell.i}-${this.selectedCell.j}`);
       oldSelectedCellElement.className = "";
+
+      // Remove the highlights
+      for (let k = 0; k < 9; k++) {
+        document.getElementById(`cell-${this.selectedCell.i}-${k}`).classList.remove('highlighted');
+        document.getElementById(`cell-${k}-${this.selectedCell.j}`).classList.remove('highlighted');
+      }
+
+      const squareCoordinates = this.getSquareCoordinates(this.selectedCell.i, this.selectedCell.j);
+      for (let { i: squareI, j: squareJ } of squareCoordinates) {
+        document.getElementById(`cell-${squareI}-${squareJ}`).classList.remove('highlighted');
+      }
+
       this.selectedCell = null;
     }
   }
@@ -31,6 +56,17 @@ export class Board {
     const newSelectedCellElement = document.getElementById(`cell-${i}-${j}`);
     newSelectedCellElement.className = window.board.cellModeSelector.mode == "Value" ? "selected-value" : "selected-annotations";
     document.addEventListener('keydown', this.selectedCell.handleKeyPress);
+
+    // Highlight the row, column, and square
+    for (let k = 0; k < 9; k++) {
+      document.getElementById(`cell-${i}-${k}`).classList.add('highlighted');
+      document.getElementById(`cell-${k}-${j}`).classList.add('highlighted');
+    }
+
+    const squareCoordinates = this.getSquareCoordinates(i, j);
+    for (let { i: squareI, j: squareJ } of squareCoordinates) {
+      document.getElementById(`cell-${squareI}-${squareJ}`).classList.add('highlighted');
+    }
   }
 
   handleOutsideClick(event) {
