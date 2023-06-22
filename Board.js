@@ -111,6 +111,7 @@ export class Board {
     <div class="sudoku-container">
       <table class="sudoku">${tableHtml}</table>
       ${this.cellModeSelector.render()}
+      <button id="undo-button" onclick="window.board.undo()">Undo</button>
     </div>`;
   }
 

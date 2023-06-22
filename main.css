@@ -90,3 +90,8 @@ table.annotations>tbody>tr>td {
     font-size: 24px;
     color: white;
 }
+
+#undo-button {
+    font-size: 1.5em;
+    padding: 8px 24px;
+}
