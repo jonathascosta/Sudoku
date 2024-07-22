@@ -1,14 +1,72 @@
 @import url('https://fonts.googleapis.com/css2?family=Cousine&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 body {
     font-family: 'Cousine', monospace;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.bebas-neue-regular {
+    font-size: 80px;
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    text-align: center;
+}
+
+#game-container {
+    display: flex;
+    margin-top: 20px; 
+}
+
+#content {
+    display: block;
+}
+
+.sudoku-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 20px; 
+}
+
+.timer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px; 
+    font-family: "Bebas Neue", sans-serif;
+}
+
+.timer-title {
+    font-size: 2.5em;
+    margin-bottom: 5px; 
+}
+
+.timer-value {
+    font-size: 1.5em; 
+    width: 100px;
+}
+
+.timer-section {
+    margin-top: 0px; 
 }
 
 table.sudoku {
@@ -32,6 +90,14 @@ table.sudoku>tbody>tr>td.selected-annotations {
     background-color: #E6F3FF !important;
 }
 
+table.sudoku>tbody>tr>td:first-child {
+    border-left-width: 3px;
+}
+
+table.sudoku>tbody>tr:first-child>td {
+    border-top-width: 3px;
+}
+
 table.sudoku>tbody>tr>td:nth-child(3n) {
     border-right-width: 3px;
 }
@@ -50,12 +116,6 @@ table.annotations {
 table.annotations>tbody>tr>td {
     width: 33%;
     height: 33%;
-}
-
-.sudoku-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .checkbox-container {
@@ -87,6 +147,7 @@ table.annotations>tbody>tr>td {
 }
 
 #loading-text {
+    margin-top: 160px;
     font-size: 24px;
     color: white;
 }

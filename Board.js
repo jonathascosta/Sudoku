@@ -4,6 +4,7 @@ import { Solver, Cell as PuzzleCell, Board as PuzzleBoard } from './SudokuCreato
 
 export class Board {
   constructor(boardData = []) {
+    this.contentDiv = document.getElementById("content");
     this.cellModeSelector = new CellModeSelector('Value', mode => this.setMode(mode));
     this.selectedCell = null;
     window.addEventListener('click', this.handleOutsideClick.bind(this));
@@ -126,7 +127,7 @@ export class Board {
         break;
     }
 
-    document.body.innerHTML = this.render();
+    this.render();
   }
 
   undo() {
@@ -138,7 +139,7 @@ export class Board {
       cell.type = lastAction.state.type;
     }
 
-    document.body.innerHTML = this.render();
+    this.render();
   }
 
   renderRow(i) {
@@ -163,7 +164,7 @@ export class Board {
         if (solvedValue !== null) {
           // Set the value of the selected cell to the solved value.
           this.boardData[this.selectedCell.i][this.selectedCell.j].setValue(solvedValue);
-          document.body.innerHTML = this.render();
+          this.render();
         }
       }
     }
@@ -174,7 +175,7 @@ export class Board {
       this.boardData[this.selectedCell.i][this.selectedCell.j].value = null;
       this.boardData[this.selectedCell.i][this.selectedCell.j].annotations = [];
       this.boardData[this.selectedCell.i][this.selectedCell.j].type = "Annotations";
-      document.body.innerHTML = this.render();
+      this.render();
     }
   }
 
@@ -188,7 +189,7 @@ export class Board {
 
   render() {
     const tableHtml = this.boardData.map((_, i) => this.renderRow(i)).join('');
-    return `
+    this.contentDiv.innerHTML =  `
     <div class="sudoku-container">
       <table class="sudoku">${tableHtml}</table>
       ${this.cellModeSelector.render()}

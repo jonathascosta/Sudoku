@@ -4,22 +4,36 @@
 <head>
     <meta charset="UTF-8" />
     <title>Sudoku</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="./main.css" rel="stylesheet" />
 </head>
 
 <body>
+    <h1 class="bebas-neue-regular">Sudoku</h1>
     <div id="loader">
         <div id="loading-text">Loading...</div>
+    </div>
+    <div id="game-container">
+        <div id="content"></div>
+        <div class="info-container hidden">
+            <div class="timer-section" style="margin-top: 200px;">
+                <div class="timer-title">Time:</div>
+                <div class="timer-value" id="timer-value">00:00</div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { Board } from './Board.js';
         import { Loader } from './Loader.js';
         import { BoardBuilder } from './SudokuCreator.js';
+        import { Timer } from './Timer.js';
 
         const loader = new Loader('loader', 3000);
         loader.start();
 
+        const timer = new Timer('timer-value');
         const worker = new Worker('./sudoku-worker.js', { type: 'module' });
 
         worker.onmessage = function (event) {
@@ -48,14 +62,17 @@
             let board = new Board(initialBoard);
             window.board = board;
             window.puzzle = sudokuPuzzle;
-            document.body.innerHTML = board.render();
+            board.render();
 
             loader.stop();
+            document.querySelector('.info-container').classList.remove('hidden'); 
+            timer.start(); 
         };
 
         worker.postMessage('start');
-
     </script>
 </body>
+
+
 
 </html>
