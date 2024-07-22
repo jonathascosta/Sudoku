@@ -7,7 +7,7 @@ export class Timer {
 
     start() {
         this.startTime = Date.now();
-        this.update();  // Atualiza imediatamente para evitar atraso inicial
+        this.update(); 
 
         this.timerInterval = setInterval(() => {
             this.update();
