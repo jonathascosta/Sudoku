@@ -1,6 +1,8 @@
 import { CellModeSelector } from './CellModeSelector.js';
 import { Cell } from './Cell.js';
-import { Solver, Cell as PuzzleCell, Board as PuzzleBoard } from './SudokuCreator.js';
+import { PuzzleCell } from "./PuzzleCell.js";
+import { PuzzleBoard } from "./PuzzleBoard.js";
+import { PuzzleSolver } from "./PuzzleSolver.js";
 
 export class Board {
   constructor(boardData = []) {
@@ -38,7 +40,6 @@ export class Board {
       const oldSelectedCellElement = document.getElementById(`cell-${this.selectedCell.i}-${this.selectedCell.j}`);
       oldSelectedCellElement.className = "";
 
-      // Remove the highlights
       for (let k = 0; k < 9; k++) {
         document.getElementById(`cell-${this.selectedCell.i}-${k}`).classList.remove('highlighted');
         document.getElementById(`cell-${k}-${this.selectedCell.j}`).classList.remove('highlighted');
@@ -71,7 +72,6 @@ export class Board {
     newSelectedCellElement.className = window.board.cellModeSelector.mode == "Value" ? "selected-value" : "selected-annotations";
     document.addEventListener('keydown', this.selectedCell.handleKeyPress);
 
-    // Highlight the row, column, and square
     for (let k = 0; k < 9; k++) {
       document.getElementById(`cell-${i}-${k}`).classList.add('highlighted');
       document.getElementById(`cell-${k}-${j}`).classList.add('highlighted');
@@ -151,18 +151,15 @@ export class Board {
     if (this.selectedCell) {
       const cell = this.boardData[this.selectedCell.i][this.selectedCell.j];
       if (cell.value == null) {
-        let solver = new Solver();
+        let solver = new PuzzleSolver();
   
-        // Convert board to the format expected by the solver.
         let board = new PuzzleBoard();
         board.Cells = this.boardData.map((row, i) =>
           row.map((c, j) => new PuzzleCell(board, i, j, !(c.value) ? 0 : c.value))
         );
   
-        // Get the solved value for the selected cell.
         const solvedValue = solver.getSolutionValue(board, this.selectedCell.i, this.selectedCell.j);
         if (solvedValue !== null) {
-          // Set the value of the selected cell to the solved value.
           this.boardData[this.selectedCell.i][this.selectedCell.j].setValue(solvedValue);
           this.render();
         }
@@ -193,13 +190,8 @@ export class Board {
     <div class="sudoku-container">
       <table class="sudoku">${tableHtml}</table>
       ${this.cellModeSelector.render()}
-      <div>
-        <button id="undo-button" onclick="window.board.undo()">Undo</button>
-        <button id="erase-button" onclick="window.board.eraseSelected()">Erase</button>
-        <button id="hint-button" onclick="window.board.hintSelected()">Hint</button>
-      </div>
     </div>`;
-  }
+}
 
   toggleMode(checkbox) {
     this.mode = checkbox.checked ? 'Annotations' : 'Value';

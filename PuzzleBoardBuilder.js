@@ -1,96 +1,10 @@
-export class Cell {
-    constructor(board, line, column, value) {
-        this.Board = board;
-        this.Line = line;
-        this.Column = column;
-        this.Value = value;
-    }
+import { PuzzleBoard } from "./PuzzleBoard.js";
+import { PuzzleCell } from "./PuzzleCell.js";
+import { PuzzleSolver } from "./PuzzleSolver.js";
 
-    Clone() {
-        return new Cell(this.Board, this.Line, this.Column, this.Value);
-    }
-
-    IsEmpty() {
-        return this.Value === 0;
-    }
-
-    SetEmpty() {
-        this.Value = 0;
-    }
-}
-
-export class Board {
+export class PuzzleBoardBuilder {
     constructor() {
-        this.Cells = null;
-    }
-
-    Clone() {
-        const board = new Board();
-        board.Cells = new Array(9);
-        for (let i = 0; i < 9; i++) {
-            board.Cells[i] = new Array(9);
-            for (let j = 0; j < 9; j++) {
-                board.Cells[i][j] = this.Cells[i][j].Clone();
-            }
-        }
-        return board;
-    }
-
-    IsValid() {
-        for (let i = 0; i < 9; i++) {
-            if (!this.IsCellValid(i, this.GetRow.bind(this)) || !this.IsCellValid(i, this.GetColumn.bind(this)) || !this.IsCellValid(i, this.GetBlock.bind(this))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    ToString() {
-        let str = '';
-        for (let a = 0; a < 9; a++) {
-            str += '-------------------------------------\n';
-            for (let b = 0; b < 9; b++) {
-                str += `| ${this.Cells[a][b].Value === 0 ? ' ' : this.Cells[a][b].Value} `;
-            }
-            str += '|\n';
-        }
-        str += '-------------------------------------\n';
-        return str;
-    }
-
-    GetRow(index) {
-        return this.Cells[index];
-    }
-
-    GetColumn(index) {
-        return this.Cells.map(row => row[index]);
-    }
-
-    GetBlock(index) {
-        const row = Math.floor(index / 3) * 3;
-        const col = (index % 3) * 3;
-        const block = [];
-        for (let i = row; i < row + 3; i++) {
-            for (let j = col; j < col + 3; j++) {
-                block.push(this.Cells[i][j]);
-            }
-        }
-        return block;
-    }
-
-    IsCellValid(index, getCells) {
-        const cells = getCells(index).filter(c => !c.IsEmpty());
-        const valueCount = cells.reduce((acc, c) => {
-            acc[c.Value] = (acc[c.Value] || 0) + 1;
-            return acc;
-        }, {});
-        return Object.values(valueCount).every(count => count === 1);
-    }
-}
-
-export class BoardBuilder {
-    constructor() {
-        this._board = new Board();
+        this._board = new PuzzleBoard();
 
         this.InitializeCells();
         this.InitializeCellValues();
@@ -117,7 +31,7 @@ export class BoardBuilder {
                     for (let d = 0; d < 3; d++) {
                         let column = 3 * c + d;
                         let number = (3 * (c + b) + ((d + a) % 3)) % 9 + 1;
-                        this._board.Cells[line][column] = new Cell(this._board, line, column, number);
+                        this._board.Cells[line][column] = new PuzzleCell(line, column, number);
                     }
                 }
             }
@@ -166,7 +80,7 @@ export class BoardBuilder {
     }
 
     RemoveRandomly() {
-        let solver = new Solver();
+        let solver = new PuzzleSolver();
         let remaining = [...Array(81).keys()];
         while (remaining.length > 0) {
             let randomIndex = Math.floor(Math.random() * remaining.length);
@@ -242,62 +156,5 @@ export class BoardBuilder {
         for (let i = 0; i < 3; i++) {
             this.SwapColumns(c1 * 3 + i, c2 * 3 + i);
         }
-    }
-}
-
-export class Solver {
-    Solve(board, row = 0, column = 0) {
-        let solutionsCount = 0;
-
-        if (!board || !board.Cells) {
-            throw "Invalid board";
-        }
-
-        if (column === 9) {
-            column = 0;
-            row++;
-
-            if (row === 9) {
-                return true;
-            }
-        }
-
-        if (!board.Cells[row][column].IsEmpty()) {
-            return this.Solve(board, row, column + 1);
-        }
-
-        for (let i = 1; i <= 9; i++) {
-            board.Cells[row][column].Value = i;
-            if (board.IsValid()) {
-                if (this.Solve(board, row, column + 1)) {
-                    if (++solutionsCount > 1) {
-                        throw "More than 1 solution";
-                    }
-                }
-            }
-            board.Cells[row][column].SetEmpty();
-        }
-
-        return solutionsCount === 1;
-    }
-
-    getSolutionValue(board, row, column) {
-        if (!board || !board.Cells) {
-            throw "Invalid board";
-        }
-
-        if (!board.Cells[row][column].IsEmpty()) {
-            return board.Cells[row][column].Value;
-        }
-
-        for (let i = 1; i <= 9; i++) {
-            board.Cells[row][column].Value = i;
-            if (this.Solve(board, 0, 0)) {
-                return i;
-            }
-            board.Cells[row][column].SetEmpty();
-        }
-
-        return null;
     }
 }

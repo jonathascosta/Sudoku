@@ -1,7 +1,7 @@
-import { BoardBuilder } from './SudokuCreator.js';
+import { PuzzleBoardBuilder } from './PuzzleBoardBuilder.js';
 
 self.onmessage = (event) => {
-    let builder = new BoardBuilder();
+    let builder = new PuzzleBoardBuilder();
     let sudokuPuzzle = builder.Build();
 
     self.postMessage(sudokuPuzzle);

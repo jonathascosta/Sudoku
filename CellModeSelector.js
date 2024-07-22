@@ -2,7 +2,7 @@ export class CellModeSelector {
     constructor(defaultMode = 'Value', onToggle = () => {}) {
       this.mode = defaultMode;
       this.onToggle = onToggle;
-      this.toggleMode = this.toggleMode.bind(this); // Bind the toggleMode method to the instance
+      this.toggleMode = this.toggleMode.bind(this);
     }
   
     toggleMode(checkboxElement) {
@@ -14,7 +14,7 @@ export class CellModeSelector {
       return `
         <div class="checkbox-container">
           <label>
-            <input type="checkbox" onchange="window.board.cellModeSelector.toggleMode(this)" ${this.mode === 'Annotations' ? 'checked' : ''} />
+            <input type="checkbox" style="margin-top: 20px" onchange="window.board.cellModeSelector.toggleMode(this)" ${this.mode === 'Annotations' ? 'checked' : ''} />
             Annotations Mode
           </label>
         </div>

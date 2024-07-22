@@ -23,11 +23,16 @@
             </div>
         </div>
     </div>
+    <div class="button-container">
+        <button id="undo-button" onclick="window.board.undo()">Undo</button>
+        <button id="erase-button" onclick="window.board.eraseSelected()">Erase</button>
+        <button id="hint-button" onclick="window.board.hintSelected()">Hint</button>
+    </div>
 
     <script type="module">
         import { Board } from './Board.js';
         import { Loader } from './Loader.js';
-        import { BoardBuilder } from './SudokuCreator.js';
+        import { PuzzleBoardBuilder } from './PuzzleBoardBuilder.js';
         import { Timer } from './Timer.js';
 
         const loader = new Loader('loader', 3000);

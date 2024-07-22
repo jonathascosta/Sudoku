@@ -1,6 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cousine&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+.button-container {
+    display: flex;
+    justify-content: start;
+    margin-top: 20px;
+}
+
+.button-container button {
+    font-size: 1.5em;
+    padding: 8px 24px;
+    margin: 0 10px;
+}
+
 body {
     font-family: 'Cousine', monospace;
     display: flex;
